@@ -1,0 +1,12 @@
+﻿@model FilterFormOptions
+@{
+    ViewData["Title"] = "View by Brand";
+}
+<h1>View Laptops by Brand</h1>
+<form method="post">
+    <div class="input-group">
+        <label class="input-group-text" asp-for="Brand">Brand</label>
+        <select class="form-select" asp-for="Brand"></select>
+    </div>
+</form>
+<h2>Filters and View Order Options</h2>

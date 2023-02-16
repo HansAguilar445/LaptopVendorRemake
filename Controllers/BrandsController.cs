@@ -25,6 +25,11 @@ namespace LaptopVendorRemake.Controllers
               return View(await _context.Brands.ToListAsync());
         }
 
+        //public IActionResult ViewByBrand()
+        //{
+            
+        //}
+
         // GET: Brands/Details/5
         public async Task<IActionResult> Details(int? id)
         {

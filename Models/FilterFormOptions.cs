@@ -2,7 +2,7 @@
 {
     public class FilterFormOptions
     {
-        public string BrandName { get; set; }
+        public int Brand { get; set; }
         public string OrderMode { get; set; }
         
         public bool FilterPrice { get; set; }
