@@ -1,0 +1,32 @@
+﻿@model IQueryable<Laptop>
+@{
+    ViewData["Title"] = "Cheapest available laptops";
+}
+<h1>The Cheapest Laptops</h1>
+@if (Model.Count() > 0) 
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Model Name</th>
+                <th>Price</th>
+                <th>Release Year</th>
+                <th>Brand</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Laptop laptop in Model)
+            {
+                <tr>
+                    <td>@laptop.Model</td>
+                    <td>$@laptop.Price</td>
+                    <td>@laptop.Year</td>
+                    <td>@laptop.Brand.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else 
+{
+    <h2>Nothing found. Please try again or add some new entries to the database.</h2>
+}

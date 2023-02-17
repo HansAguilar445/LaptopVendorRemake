@@ -1,0 +1,21 @@
+﻿@model ComparisonViewModel
+@{
+
+}
+<div class="container-fluid">
+    <h1>Compare Laptops</h1>
+    <form method="post" class="flex-row align-items-sm-center justify-content-center">
+        <select name="firstLaptop" class="form-select p-1" asp-items="ViewBag.Laptops">
+        </select>
+
+        <select name="secondLaptop" class="form-select p-1" asp-items="ViewBag.Laptops">
+            
+        </select>
+
+        <button type="submit" class="btn-primary">Submit</button>
+    </form>
+    @if (Model is ComparisonViewModel && Model.Laptop1 != null && Model.Laptop2 != null) 
+    {
+        <partial name="_LaptopComparison" model="Model"/>
+    }
+</div>

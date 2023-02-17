@@ -1,4 +1,7 @@
 ﻿@model List<Laptop>
+@{
+    ViewData["Title"] = "Laptops by brand";
+}
 
 <h1>Laptops by Brand</h1>
 @if (Model.Count() > 0) 
@@ -32,12 +35,12 @@
                 <td>@laptop.Model</td>
                 <td>$@laptop.Price</td>
                 <td>@laptop.Year</td>
-                @*<td>$@laptop.Brand.Name</td>*@
+                <td>@laptop.Brand.Name</td>
             </tr>
         }
         </tbody>
     </table>
 } else 
 {
-    <h2>Nothing found. Please try again or add some new entries.</h2>
+    <h2>Nothing found. Please try again or add some new entries to the Laptops table.</h2>
 }

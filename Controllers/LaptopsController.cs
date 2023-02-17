@@ -22,13 +22,49 @@ namespace LaptopVendorRemake.Controllers
         public IActionResult CheapestLaptops()
         {
             var laptops = _context.Laptops.
+                Include(laptop => laptop.Brand).
                 OrderBy(laptop => laptop.Price).
                 Take(3);
             return View(laptops);
         }
 
-        // GET: Laptops
-        public async Task<IActionResult> Index()
+        public IActionResult MostExpensiveLaptops()
+        {
+            var laptops = _context.Laptops.
+                Include(laptop => laptop.Brand).
+                OrderByDescending(laptop => laptop.Price).
+                Take(2);
+            return View(laptops);
+        }
+
+        public IActionResult CompareLaptops()
+        {
+            ViewData["Laptops"] = new SelectList(_context.Laptops, "Id", "Model");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CompareLaptops(int firstLaptop, int secondLaptop)
+        {
+            var laptops = _context.Laptops.Include(laptop => laptop.Brand);
+            Laptop laptop1 = laptops.
+                SingleOrDefault(laptop => laptop.Id == firstLaptop);            
+            Laptop laptop2 = laptops.
+                SingleOrDefault(laptop => laptop.Id == secondLaptop);
+            
+            ViewData["Laptops"] = new SelectList(_context.Laptops, "Id", "Model");
+
+            ComparisonViewModel model = new() 
+                { 
+                    Laptop1 = laptop1, 
+                    Laptop2 = laptop2 
+            };
+
+            return View(model);
+        }
+
+            // GET: Laptops
+            public async Task<IActionResult> Index()
         {
             var laptopVendorContext = _context.Laptops.Include(l => l.Brand);
             return View(await laptopVendorContext.ToListAsync());
@@ -72,7 +108,7 @@ namespace LaptopVendorRemake.Controllers
 
             //Would have kept ModelState.IsValid if it didn't return false because laptop.Brand was null when everything else was fine
             //since there is no real way I know at the time of writing this to attach Brand to Laptop through the scaffolded create form
-            if (LaptopIsValidUponCreation(laptop))
+            if (LaptopIsValid(laptop))
             {
                 brand.Laptops.Add(laptop);
                 await _context.SaveChangesAsync();
@@ -111,7 +147,10 @@ namespace LaptopVendorRemake.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            Brand brand = await _context.Brands.SingleOrDefaultAsync(brand => brand.Id == laptop.BrandId);
+            laptop.Brand = brand;
+
+            if (LaptopIsValid(laptop))
             {
                 try
                 {
@@ -178,7 +217,7 @@ namespace LaptopVendorRemake.Controllers
           return _context.Laptops.Any(e => e.Id == id);
         }
 
-        private bool LaptopIsValidUponCreation(Laptop laptop)
+        private bool LaptopIsValid(Laptop laptop)
         {
             if (laptop == null)
             {
