@@ -63,10 +63,29 @@ namespace LaptopVendorRemake.Controllers
             return View(model);
         }
 
-            // GET: Laptops
-            public async Task<IActionResult> Index()
+        public IActionResult FindLaptopsInBudget()
         {
-            var laptopVendorContext = _context.Laptops.Include(l => l.Brand);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult FindLaptopsInBudget(decimal budget)
+        {
+            ViewData["title"] = "Laptops In Budget";
+
+            var laptops = _context.Laptops.
+                Include(laptop => laptop.Brand).
+                Where(laptop => laptop.Price <= budget);
+
+            return View(laptops);
+        }
+
+        // GET: Laptops
+        public async Task<IActionResult> Index()
+        {
+            var laptopVendorContext = _context.Laptops.
+                Include(l => l.Brand).
+                OrderBy(l => l.Brand.Name);
             return View(await laptopVendorContext.ToListAsync());
         }
 
