@@ -3,10 +3,36 @@
     ViewData["Title"] = "View by Brand";
 }
 <h1>View Laptops by Brand</h1>
-<form method="post">
+<form method="post" asp-controller="Brands" asp-action="ByBrand">
     <div class="input-group">
         <label class="input-group-text" asp-for="Brand">Brand</label>
-        <select class="form-select" asp-for="Brand"></select>
+        <select class="form-select" asp-for="Brand" asp-items="@ViewBag.Brands"></select>
     </div>
+    <div class="input-group">
+        <label class="input-group-text" asp-for="OrderMode">Order by</label>
+        <select class="form-select" asp-for="OrderMode">
+            <option value="YearDesc">Release year (newest to oldest)</option>
+            <option value="YearAsc">Release year (oldest to newest)</option>
+            <option value="PriceDesc">Price (highest to lowest)</option>
+            <option value="PriceAsc">Price (lowest to highest)</option>
+        </select>
+    </div>
+    <h2>Filters</h2>
+    <div class="input-group">
+        <div class="input-group-text">
+            <input class="form-check-input" asp-for="FilterYear" />
+        </div>
+        <label class="input-group-text" asp-for="FilterYear">Year (older or younger than the given value)</label>
+        <select class="form-select" asp-for="FilterYearMode" asp-items="Html.GetEnumSelectList<FilterYearMode>()"></select>
+        <input class="form-control" asp-for="Year" />
+    </div>
+    <div class="input-group">
+        <div class="input-group-text">
+            <input class="form-check-input" asp-for="FilterPrice" />
+        </div>
+        <label class="input-group-text" asp-for="FilterPrice">Price (Higher or lower than the given value)</label>
+        <select class="form-select" asp-for="FilterPriceMode" asp-items="Html.GetEnumSelectList<FilterPriceMode>()"></select>
+        <input class="form-control" asp-for="Price" />
+    </div>
+    <button class="btn-primary" type="submit">Submit</button>
 </form>
-<h2>Filters and View Order Options</h2>

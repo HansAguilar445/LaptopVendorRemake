@@ -25,10 +25,89 @@ namespace LaptopVendorRemake.Controllers
               return View(await _context.Brands.ToListAsync());
         }
 
-        //public IActionResult ViewByBrand()
-        //{
-            
-        //}
+        public IActionResult ViewByBrand()
+        {
+            ViewBag.Brands = new SelectList(_context.Brands, "Id", "Name");
+            return View();
+        }
+
+        public IActionResult ByBrand()
+        {
+            return RedirectToAction(nameof(ViewByBrand));
+        }
+
+        [HttpPost]
+        public IActionResult ByBrand(FilterFormOptions options)
+        {
+            Brand brand = _context.Brands.Include(brand => brand.Laptops).SingleOrDefault(brand => brand.Id == options.Brand);
+            var laptops = brand.Laptops.ToList();
+
+            ViewBag.Brand = brand.Name;
+
+            switch(options.OrderMode)
+            {
+                case "YearDesc":
+                    laptops = laptops.
+                        OrderByDescending(laptop => laptop.Year).
+                        ToList();
+                    ViewBag.OrderMode = "by release year (newest to oldest)";
+                    break;
+                case "YearAsc":
+                    laptops = laptops.
+                        OrderBy(laptop => laptop.Year).
+                        ToList();
+                        ViewBag.OrderMode = "by release year (oldest to newest)";
+                    break;
+                case "PriceDesc":
+                    laptops = laptops.
+                        OrderByDescending(laptop => laptop.Price).
+                        ToList();
+                    ViewBag.OrderMode = "by price (lowest to highest)";
+                    break;
+                case "PriceAsc":
+                    laptops = laptops.
+                        OrderBy(laptop => laptop.Price).
+                        ToList();
+                    ViewBag.OrderMode = "by price (highest to lowest)";
+                    break;
+            }
+
+            if (options.FilterYear)
+            {
+                if (options.FilterYearMode == FilterYearMode.Older)
+                {
+                    laptops = laptops.
+                        Where(laptop => laptop.Year < options.Year).
+                        ToList();
+                    ViewBag.YearFilter = $"Year (older than {options.Year})";
+                } else
+                {
+                    laptops = laptops.
+                        Where(laptop => laptop.Year > options.Year).
+                        ToList();
+                    ViewBag.YearFilter = $"Year (younger than {options.Year})";
+                }
+            }
+
+            if (options.FilterPrice)
+            {
+                if (options.FilterPriceMode == FilterPriceMode.Below)
+                {
+                    laptops = laptops.
+                        Where(laptop => laptop.Price < options.Price).
+                        ToList();
+                    ViewBag.PriceFilter = $"Price (lower than {options.Price})";
+                } else
+                {
+                    laptops = laptops.
+                        Where(laptop => laptop.Price > options.Price).
+                        ToList();
+                    ViewBag.PriceFilter = $"Price (higher than {options.Price})";
+                }
+            }
+
+            return View(laptops);
+        }
 
         // GET: Brands/Details/5
         public async Task<IActionResult> Details(int? id)
