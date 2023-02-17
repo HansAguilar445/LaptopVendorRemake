@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using LaptopVendorRemake.Models;
 using LaptopVendorRemake.Data;
+using LaptopVendorRemake.Models;
 
 namespace LaptopVendorRemake.Controllers
 {
@@ -17,6 +17,14 @@ namespace LaptopVendorRemake.Controllers
         public LaptopsController(LaptopVendorContext context)
         {
             _context = context;
+        }
+
+        public IActionResult CheapestLaptops()
+        {
+            var laptops = _context.Laptops.
+                OrderBy(laptop => laptop.Price).
+                Take(3);
+            return View(laptops);
         }
 
         // GET: Laptops
@@ -57,11 +65,16 @@ namespace LaptopVendorRemake.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Model,Price,Year,BrandId")] Laptop laptop)
+        public async Task<IActionResult> Create([Bind("Model,Price,Year,BrandId")] Laptop laptop)
         {
-            if (ModelState.IsValid)
+            Brand brand = await _context.Brands.SingleOrDefaultAsync(brand => brand.Id == laptop.BrandId);
+            laptop.Brand = brand;
+
+            //Would have kept ModelState.IsValid if it didn't return false because laptop.Brand was null when everything else was fine
+            //since there is no real way I know at the time of writing this to attach Brand to Laptop through the scaffolded create form
+            if (LaptopIsValidUponCreation(laptop))
             {
-                _context.Add(laptop);
+                brand.Laptops.Add(laptop);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -82,7 +95,7 @@ namespace LaptopVendorRemake.Controllers
             {
                 return NotFound();
             }
-            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id", laptop.BrandId);
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name", laptop.BrandId);
             return View(laptop);
         }
 
@@ -163,6 +176,26 @@ namespace LaptopVendorRemake.Controllers
         private bool LaptopExists(int id)
         {
           return _context.Laptops.Any(e => e.Id == id);
+        }
+
+        private bool LaptopIsValidUponCreation(Laptop laptop)
+        {
+            if (laptop == null)
+            {
+                return false;
+            }
+            
+            if (string.IsNullOrWhiteSpace(laptop.Model))
+            {
+                return false;
+            }
+
+            if (laptop.Brand == null)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

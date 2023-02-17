@@ -1,13 +1,16 @@
-﻿namespace LaptopVendorRemake.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LaptopVendorRemake.Models
 {
     public class FilterFormOptions
     {
-        public string BrandName { get; set; }
+        public int Brand { get; set; }
         public string OrderMode { get; set; }
         
         public bool FilterPrice { get; set; }
         public FilterPriceMode FilterPriceMode { get; set; }
-        public double Price { get; set; }
+
+        public decimal Price { get; set; }
         
         public bool FilterYear { get; set; }
         public FilterYearMode FilterYearMode { get; set; }
