@@ -1,0 +1,15 @@
+﻿@model IQueryable<Laptop>
+@{
+    ViewData["Title"] = "Find laptops in your budget";
+}
+<div class="container-fluid">
+    <h1>Search For Laptops That Fit Your Budget</h1>
+    <form method="post" class="flex-row align-items-sm-center justify-content-center">
+        <input type="number" class="form-control" name="budget" placeholder="$budget" step=".01" />
+        <button type="submit" class="btn-primary">Submit</button>
+    </form>
+
+    @if (Model is IQueryable<Laptop>) {
+        <partial name="_LaptopsInBudget" model="Model"/>
+    }
+</div>
