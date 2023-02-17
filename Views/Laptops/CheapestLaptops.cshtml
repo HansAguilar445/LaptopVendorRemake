@@ -1,0 +1,26 @@
+﻿@model IQueryable<Laptop>
+@{
+    ViewData["Title"] = "Cheapest available laptops";
+}
+<h1>The Three Cheapest Laptops</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Model Name</th>
+            <th>Price</th>
+            <th>Release Year</th>
+            <th>Brand</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Laptop laptop in Model)
+        {
+            <tr>
+                <td>@laptop.Model</td>
+                <td>$@laptop.Price</td>
+                <td>@laptop.Year</td>
+                <td>@laptop.Brand.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

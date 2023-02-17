@@ -22,6 +22,7 @@ namespace LaptopVendorRemake.Controllers
         public IActionResult CheapestLaptops()
         {
             var laptops = _context.Laptops.
+                Include(laptop => laptop.Brand).
                 OrderBy(laptop => laptop.Price).
                 Take(3);
             return View(laptops);
@@ -72,7 +73,7 @@ namespace LaptopVendorRemake.Controllers
 
             //Would have kept ModelState.IsValid if it didn't return false because laptop.Brand was null when everything else was fine
             //since there is no real way I know at the time of writing this to attach Brand to Laptop through the scaffolded create form
-            if (LaptopIsValidUponCreation(laptop))
+            if (LaptopIsValid(laptop))
             {
                 brand.Laptops.Add(laptop);
                 await _context.SaveChangesAsync();
@@ -111,7 +112,10 @@ namespace LaptopVendorRemake.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            Brand brand = await _context.Brands.SingleOrDefaultAsync(brand => brand.Id == laptop.BrandId);
+            laptop.Brand = brand;
+
+            if (LaptopIsValid(laptop))
             {
                 try
                 {
@@ -178,7 +182,7 @@ namespace LaptopVendorRemake.Controllers
           return _context.Laptops.Any(e => e.Id == id);
         }
 
-        private bool LaptopIsValidUponCreation(Laptop laptop)
+        private bool LaptopIsValid(Laptop laptop)
         {
             if (laptop == null)
             {
