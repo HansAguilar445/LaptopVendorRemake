@@ -28,8 +28,43 @@ namespace LaptopVendorRemake.Controllers
             return View(laptops);
         }
 
-        // GET: Laptops
-        public async Task<IActionResult> Index()
+        public IActionResult MostExpensiveLaptops()
+        {
+            var laptops = _context.Laptops.
+                Include(laptop => laptop.Brand).
+                OrderByDescending(laptop => laptop.Price).
+                Take(2);
+            return View(laptops);
+        }
+
+        public IActionResult CompareLaptops()
+        {
+            ViewData["Laptops"] = new SelectList(_context.Laptops, "Id", "Model");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CompareLaptops(int firstLaptop, int secondLaptop)
+        {
+            var laptops = _context.Laptops.Include(laptop => laptop.Brand);
+            Laptop laptop1 = laptops.
+                SingleOrDefault(laptop => laptop.Id == firstLaptop);            
+            Laptop laptop2 = laptops.
+                SingleOrDefault(laptop => laptop.Id == secondLaptop);
+            
+            ViewData["Laptops"] = new SelectList(_context.Laptops, "Id", "Model");
+
+            ComparisonViewModel model = new() 
+                { 
+                    Laptop1 = laptop1, 
+                    Laptop2 = laptop2 
+            };
+
+            return View(model);
+        }
+
+            // GET: Laptops
+            public async Task<IActionResult> Index()
         {
             var laptopVendorContext = _context.Laptops.Include(l => l.Brand);
             return View(await laptopVendorContext.ToListAsync());

@@ -1,0 +1,26 @@
+﻿@model ComparisonViewModel
+<h2>Comparing @Model.Laptop1.Model and @Model.Laptop2.Model</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Model Name</th>
+            <th>Brand</th>
+            <th>Price</th>
+            <th>Release Year</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Laptop1.Model</td>
+            <td>@Model.Laptop1.Brand.Name</td>
+            <td>@Model.Laptop1.Price</td>
+            <td>@Model.Laptop1.Year</td>
+        </tr>
+        <tr>
+            <td>@Model.Laptop2.Model</td>
+            <td>@Model.Laptop2.Brand.Name</td>
+            <td>@Model.Laptop2.Price</td>
+            <td>@Model.Laptop2.Year</td>
+        </tr>
+    </tbody>
+</table>
